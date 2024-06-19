@@ -14,7 +14,7 @@ const jwt = require("jsonwebtoken");
 const utils = require("../../utils/helper");
 const { Sequelize, QueryTypes } = require("sequelize");
 const { ACTIVE, BLOCKED } = require("../../utils/constants");
-const {currentDate} = require('../../utils/currentdate.gmt6');
+const { currentDate } = require('../../utils/currentdate.gmt6');
 
 exports.getCustomer = async (req, res, next) => {
   try {
@@ -44,7 +44,7 @@ exports.getCustomer = async (req, res, next) => {
       offset: page * limit,
       limit: limit,
       order: [["id", "DESC"]],
-      where: {organization_id:adminOraganizationID},
+      where: { organization_id: adminOraganizationID },
     };
     if (search_text) {
       console.log("search_text-------", search_text);
@@ -68,12 +68,13 @@ exports.getCustomer = async (req, res, next) => {
       adminBusinessName,
       totalMembers,
       superAdmin,
-      active:10
+      active: 10
     });
   } catch (err) {
     next(err);
   }
 };
+
 exports.downloadOrganizationCutomerCsv = async (req, res, next) => {
   try {
     let admin = req.admin;
@@ -97,62 +98,62 @@ exports.downloadOrganizationCutomerCsv = async (req, res, next) => {
       offset: page * limit,
       limit: limit,
       order: [["id", "DESC"]],
-      where: {organization_id:adminOraganizationID},
+      where: { organization_id: adminOraganizationID },
     };
     let data = await Customer.findAndCountAll(options);
-    if(!data)
-    {
+    if (!data) {
       console.log('users not found')
-      return 
+      return
     }
     let userinfo = data.rows;
 
-// Assuming columns is an array containing your custom column names
-const columns = ['name', 'age', 'contact_number','visit_date','total_loyalty_point']; // Replace with your actual column names
+    // Assuming columns is an array containing your custom column names
+    const columns = ['name', 'age', 'contact_number', 'visit_date', 'total_loyalty_point']; // Replace with your actual column names
 
-const csvContent = convertToCSV(userinfo, columns);
-res.setHeader('Content-Disposition', 'attachment; filename=users.csv');
-res.setHeader('Content-Type', 'text/csv');
-console.log('csvContent',csvContent)
-res.status(200).send(csvContent);
+    const csvContent = convertToCSV(userinfo, columns);
+    res.setHeader('Content-Disposition', 'attachment; filename=users.csv');
+    res.setHeader('Content-Type', 'text/csv');
+    console.log('csvContent', csvContent)
+    res.status(200).send(csvContent);
 
-function convertToCSV(data, columns) {
-  const header = columns.join(',') + '\n';
-  const csvRows = data.map(row => columns.map(column => {
-    let cellValue;
-  
-    if (column === 'visit_date') {
-      row.Customer_Visits=row.Customer_Visits[0];
-      cellValue = row.Customer_Visits[column]
-    } 
-    // else if (Array.isArray(row[column])) {
-    //   cellValue = row[column].join(',');
-    // }
-     else {
-      cellValue = row[column];
+    function convertToCSV(data, columns) {
+      const header = columns.join(',') + '\n';
+      const csvRows = data.map(row => columns.map(column => {
+        let cellValue;
+
+        if (column === 'visit_date') {
+          row.Customer_Visits = row.Customer_Visits[0];
+          cellValue = row.Customer_Visits[column]
+        }
+        // else if (Array.isArray(row[column])) {
+        //   cellValue = row[column].join(',');
+        // }
+        else {
+          cellValue = row[column];
+        }
+
+        return cellValue;
+      }));
+
+      return header + csvRows.join('\n')
+      // map(row => row.join(',')).join('\n');
+
     }
-  
-    return cellValue;
-  }));
-  
-  return header + csvRows.join('\n')
-  // map(row => row.join(',')).join('\n');
-  
-}
 
   } catch (error) {
-    console.log('error',error)
+    console.log('error', error)
   }
 }
 
 exports.getCustomerDetail = async (req, res, next) => {
   try {
+
     const { page, limit, search_text, message, error, formValue } = req.query;
     // Assuming you have Sequelize initialized as sequelize
-   const customerID =  req.params.id;
-   let admin = req.admin;
-   let adminThemeColor = admin.Organizations[0].theme_color;
-   let adminBusinessName = admin.Organizations[0].business_name;
+    const customerID = req.params.id;
+    let admin = req.admin;
+    let adminThemeColor = admin.Organizations[0].theme_color;
+    let adminBusinessName = admin.Organizations[0].business_name;
     let adminOraganizationID = admin.Organizations[0].id;
     const totalLoyaltyPoints = await Customer.sum("overall_total_loyalty_point", {
       where: {
@@ -160,7 +161,7 @@ exports.getCustomerDetail = async (req, res, next) => {
         organization_id: adminOraganizationID // Add organization ID condition
       }
     });
-    console.log("totalLoyaltyPoints-----------------------",totalLoyaltyPoints);
+    console.log("totalLoyaltyPoints-----------------------", totalLoyaltyPoints);
     const totalRedeemLoyaltyPoints = await Customer.sum("total_redeem_loyalty_point", {
       where: {
         id: req.params.id,
@@ -174,14 +175,14 @@ exports.getCustomerDetail = async (req, res, next) => {
         organization_id: adminOraganizationID // Add organization ID condition
       }
     });
-  
+
     const totalTransactionAmount = await Customer_Visit.sum("transaction_amount", {
       where: {
         customer_id: req.params.id,
-        organization_id: adminOraganizationID 
+        organization_id: adminOraganizationID
       }
     });
-  
+
     // Calculate remaining loyalty points
     // const remainingLoyaltyPoints = totalLoyaltyPoints - totalRedeemLoyaltyPoints;
 
@@ -220,7 +221,7 @@ exports.getCustomerDetail = async (req, res, next) => {
     } else {
       console.log('No data found for the current month.');
     }
-  
+
     const customerVisitCountForCurrentMonth = await sequelize.query(
       `
       SELECT 
@@ -238,7 +239,7 @@ exports.getCustomerDetail = async (req, res, next) => {
         type: Sequelize.QueryTypes.SELECT
       }
     );
-    console.log("customerVisitCountForCurrentMonth",customerVisitCountForCurrentMonth);
+    console.log("customerVisitCountForCurrentMonth", customerVisitCountForCurrentMonth);
     let visitCount;
 
     if (customerVisitCountForCurrentMonth.length > 0) {
@@ -247,15 +248,16 @@ exports.getCustomerDetail = async (req, res, next) => {
     } else {
       console.log(`No visits found for Customer ${customerID} in Organization ${adminOraganizationID} for the current month.`);
     }
-    
+
     // console.log('Outside if condition:', visitCount);
-  
+
     let options = {
       distinct: true,
       offset: page * limit,
       limit: limit,
       order: [["visit_date", "DESC"]],
-      where: {customer_id: req.params.id,organization_id:adminOraganizationID,
+      where: {
+        customer_id: req.params.id, organization_id: adminOraganizationID,
         [Op.and]: [
           {
             [Op.or]: [
@@ -265,7 +267,7 @@ exports.getCustomerDetail = async (req, res, next) => {
             ]
           }
         ]
-    },
+      },
     };
     if (search_text) {
       console.log("search_text-------", search_text);
@@ -279,11 +281,11 @@ exports.getCustomerDetail = async (req, res, next) => {
     // Calculate engagement rate
     const engagementRate = Math.round((visitCount / maxVisitCount) * 100);
     // console.log('Engagement Rate:', engagementRate);
-  
+
     // Round off engagement rate
     // const engagementRatePercentage = Math.round(engagementRate);
-    console.log("engagementRate--",engagementRate);
-  // userMonthVisitCount  / currentMonthDays (<%= roundedEngagementRate %>%)
+    console.log("engagementRate--", engagementRate);
+    // userMonthVisitCount  / currentMonthDays (<%= roundedEngagementRate %>%)
     let superAdmin = admin.is_superadmin;
     return res.render("admin/customer-detail/customer-detail.ejs", {
       message,
@@ -303,9 +305,86 @@ exports.getCustomerDetail = async (req, res, next) => {
       adminBusinessName,
       engagementRate,
       superAdmin,
-      active:10
+      active: 10
     });
   } catch (err) {
     next(err);
   }
 };
+
+
+exports.editCustomer = async (req, res, next) => {
+  try {
+    const { error, message, formValue } = req.query;
+    const customerId = req.params.id;
+
+    // Fetch customer details
+    const customer = await Customer.findOne({
+      where: { id: customerId },
+      attributes: [
+        "id",
+        "name",
+        "date_of_birth",
+        "contact_number",
+        // "total_loyalty_point",
+        // "overall_total_loyalty_point",
+        // "total_redeem_loyalty_point",
+        // "total_remaining_loyalty_point",
+        // "status",
+      ],
+    });
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    // Fetch admin details for rendering
+    let admin = req.admin;
+    let adminThemeColor = admin.Organizations[0].theme_color;
+    let adminBusinessName = admin.Organizations[0].business_name;
+    let superAdmin = admin.is_superadmin;
+
+    // Render edit customer form
+    res.render("admin/customer/edit-customer.ejs", {
+      customer, // Corrected here
+      error,
+      message,
+      formValue,
+      adminThemeColor,
+      adminBusinessName,
+      superAdmin,
+      active: 10,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+exports.updateCustomer = async (req, res, next) => {
+  try {
+    const customerId = req.params.id;
+    const { name, contact_number, date_of_birth } = req.body;
+
+    // Find the customer by ID
+    const customer = await Customer.findByPk(customerId);
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    // Update the customer details
+    await customer.update({
+      name,
+      contact_number,
+      date_of_birth
+    });
+
+    req.success = "Successfully Updated.";
+    return res.redirect(`/admin/customer/list`);
+  } catch (err) {
+    req.error = "Error updating customer.";
+    next(err);
+  }
+};
+

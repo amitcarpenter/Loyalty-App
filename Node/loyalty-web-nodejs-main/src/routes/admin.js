@@ -81,6 +81,8 @@ router.post('/promotion/sendsms',controller.PromotionController.sendSmsApi)
 // CustomerController
 router.get('/customer/list',checkAuth,subscriptionCheck,controller.CustomerController.getCustomer);
 router.get('/customer/detail/:id',checkAuth,subscriptionCheck,controller.CustomerController.getCustomerDetail);
+router.get('/edit-customer/:id',checkAuth,subscriptionCheck,controller.CustomerController.editCustomer);
+router.post('/customer/update/:id',checkAuth,subscriptionCheck,controller.CustomerController.updateCustomer);
 
 // SettingController
 router.get('/setting',checkAuth,subscriptionCheck,controller.SettingController.getSetting);

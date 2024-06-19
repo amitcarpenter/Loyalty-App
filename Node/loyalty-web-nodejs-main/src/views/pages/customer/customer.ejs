@@ -182,10 +182,14 @@
                                     <%= visit.visit_date ? visit.visit_date : "-----------" %>
                                   </td>
                                   <td class="text-center">
-                                    <%= customer.total_loyalty_point !== null ? customer.total_loyalty_point : 0 %>
-                                  </td>                                  
+                                    <%= customer.total_loyalty_point !==null ? customer.total_loyalty_point : 0 %>
+                                  </td>
+
                                   <td class="text-center">
-                                    <a type="button" class="btn btn-round btn-primary"
+                                    <a href="/admin/edit-customer/<%= customer.id %>" class="tblEditBtn">
+                                      <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a type="button" class="btn btn-round btn-primary "
                                       href="/admin/customer/detail/<%= customer.id %>">
                                       <%= __('View Details') %>
                                     </a>
@@ -227,8 +231,7 @@
                                               </a></li>
                                             <% } else { %>
                                               <li>
-                                                <a
-                                                  href="/admin/customer/list?page=<%= i %>&limit=10">
+                                                <a href="/admin/customer/list?page=<%= i %>&limit=10">
                                                   <%= i %>
                                                 </a>
                                               </li>

@@ -12,6 +12,8 @@ const { ACTIVE, BLOCKED } = require("../../utils/constants");
 // const moment = require('moment');
 const moment = require('moment-timezone');
 const {currentDate} = require('../../utils/currentdate.gmt6');
+
+
 exports.getCreateReward = async (req, res, next) => {
   try {
     const { message, error, formValue } = req.query;
@@ -32,6 +34,7 @@ exports.getCreateReward = async (req, res, next) => {
     next(err);
   }
 };
+
 exports.createReward = async (req, res, next) => {
   try {
     let admin = req.admin;

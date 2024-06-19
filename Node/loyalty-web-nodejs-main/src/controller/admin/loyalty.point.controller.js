@@ -203,3 +203,5 @@ exports.deleteLoyaltyPoint = async (req, res, next) => {
     next(err);
   }
 };
+
+

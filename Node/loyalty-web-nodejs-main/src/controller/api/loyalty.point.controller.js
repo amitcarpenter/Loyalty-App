@@ -15,6 +15,9 @@ const { Op } = require("sequelize");
 const Joi = require("joi");
 const Response = require("../../utils/response");
 const {currentDate} = require('../../utils/currentdate.gmt6');
+
+
+
 exports.getRedeemLoyaltyPoints = async (req, res) => {
   try {
     const reqParam = req.body;
@@ -71,6 +74,7 @@ exports.getRedeemLoyaltyPoints = async (req, res) => {
     if (!customerDetails) {
       return Response.errorResponseWithoutData(res, "Customer does not exist for that organization");
     }
+    
     // let customerLoyaltyPoints = customerDetails.total_loyalty_point;
     let customerLoyaltyPoints = customerDetails && customerDetails.total_loyalty_point ? parseInt(customerDetails.total_loyalty_point) : 0;
     let customerTotalRemainingLoyaltyPoint = customerDetails && customerDetails.total_remaining_loyalty_point ? parseInt(customerDetails.total_remaining_loyalty_point) : 0;

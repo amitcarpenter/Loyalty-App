@@ -14,6 +14,3 @@ module.exports = {
         to: '+18777804236'
     }
 }
-
-// console.log(process.env.ACCOUNT_SID)
-// console.log(process.env.ACCOUNT_TOKEN)
