@@ -66,7 +66,7 @@ exports.customerLogin = async (req, res, next) => {
             "received_loyalty_point",
             "redeem_loyalty_point",
           ],
-          order: [['visit_date', 'ASC']], // Order by visit_date in ascending order
+          order: [['visit_date', 'ASC']], 
         },
       ],
     });
