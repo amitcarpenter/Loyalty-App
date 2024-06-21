@@ -60,6 +60,11 @@ router.get('/loyalty/edit/:id',checkAuth,subscriptionCheck,controller.LoyaltyPoi
 router.post('/loyalty/update/:id',checkAuth,subscriptionCheck,controller.LoyaltyPointController.updateLoyaltyPoint);
 router.get('/loyalty/delete/:id',checkAuth,subscriptionCheck,controller.LoyaltyPointController.deleteLoyaltyPoint);
 
+// Point Per Dollar
+router.post('/loyalty/pointperdollar/create',controller.LoyaltyPointController.upsertPointPerDollar);
+router.get('/loyalty/pointperdollar',checkAuth,subscriptionCheck,controller.LoyaltyPointController.showUpsertPointPerDollarPage);
+
+
 //RewardController
 router.get('/reward/create',checkAuth,subscriptionCheck,controller.RewardController.getCreateReward);
 router.post('/reward/create',checkAuth,subscriptionCheck,controller.RewardController.createReward);

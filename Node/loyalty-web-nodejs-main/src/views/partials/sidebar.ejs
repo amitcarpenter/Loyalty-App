@@ -42,17 +42,36 @@
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li class="nav-item <%= (active === 4) ? " active" : "" %>">
+                        <!-- <li class="nav-item <%= (active === 4) ? " active" : "" %>">
                             <a href="/admin/loyalty/create" class="nav-link ">
                                 <span class="title mx-4">
                                     <%= __('Create Loyalty Points') %>
                                 </span>
                             </a>
-                        </li>
-                        <li class="nav-item <%= (active === 5) ? " active" : "" %>">
+                        </li> -->
+
+                        <% if (active === 4) { %>
+                            <li class="nav-item <%= (active === 4) ? 'active' : '' %>">
+                                <a href="/admin/loyalty/create" class="nav-link">
+                                    <span class="title mx-4">
+                                        <%= __('Create Loyalty Points') %>
+                                    </span>
+                                </a>
+                            </li>
+                        <% } %>
+                        
+                        
+                        <!-- <li class="nav-item <%= (active === 5) ? " active" : "" %>">
                             <a href="/admin/loyalty/list" class="nav-link ">
                                 <span class="title mx-4">
                                     <%= __('All Loyalty Points') %>
+                                </span>
+                            </a>
+                        </li> -->
+                        <li class="nav-item <%= (active === 6) ? " active" : "" %>">
+                            <a href="/admin/loyalty/pointperdollar" class="nav-link ">
+                                <span class="title mx-4">
+                                    <%= __('Point Per Dollar') %>
                                 </span>
                             </a>
                         </li>

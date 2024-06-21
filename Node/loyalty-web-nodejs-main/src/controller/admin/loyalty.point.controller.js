@@ -4,12 +4,15 @@ const {
   Organization_User,
   Organization_Subscription,
   Loyalty_Point_Rule,
+  PointPerDollar
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const utils = require("../../utils/helper");
 const { Op } = require("sequelize");
+const Joi = require("joi")
 const { ACTIVE, BLOCKED } = require("../../utils/constants");
+const Response = require("../../utils/response");
 
 exports.getCreateLoyaltyPoint = async (req, res, next) => {
   try {
@@ -25,7 +28,7 @@ exports.getCreateLoyaltyPoint = async (req, res, next) => {
       adminThemeColor,
       adminBusinessName,
       superAdmin,
-      active:4
+      active: 4
     });
   } catch (err) {
     next(err);
@@ -46,7 +49,7 @@ exports.createLoyaltyPoint = async (req, res, next) => {
     let admin = req.admin;
     let adminOrganizationID = admin.Organizations[0].id;
     req.body.organization_id = adminOrganizationID;
-   
+
     // Check if end_transaction_amount is less than or equal to start_transaction_amount
     if (Number(end_transaction_amount) <= Number(start_transaction_amount)) {
       throw new Error("End transaction amount must be greater than start transaction amount.");
@@ -122,7 +125,7 @@ exports.getLoyaltyPoint = async (req, res, next) => {
       adminThemeColor,
       adminBusinessName,
       superAdmin,
-      active:5
+      active: 5
     });
   } catch (err) {
     next(err);
@@ -155,7 +158,7 @@ exports.editLoyaltyPoint = async (req, res, next) => {
       adminThemeColor,
       adminBusinessName,
       superAdmin,
-      active:5
+      active: 5
     });
   } catch (err) {
     next(err);
@@ -203,5 +206,102 @@ exports.deleteLoyaltyPoint = async (req, res, next) => {
     next(err);
   }
 };
+
+
+//==================================== 7771874281 Point per dollar Routes ==============================
+
+exports.upsertPointPerDollar = async (req, res) => {
+  try {
+    const schema = Joi.object({
+      pointPerDollarNumber: Joi.number().integer().required(),
+      organization_id: Joi.number().integer().required()
+    });
+
+    const { error, value } = schema.validate(req.body);
+
+    if (error) {
+      return Response.validationErrorResponseData(
+        res,
+        res.__(`${error.details[0].message}`)
+      );
+    }
+
+    const existingRecord = await PointPerDollar.findOne({
+      where: {
+        organization_id: value.organization_id
+      }
+    });
+
+    let responseMessage;
+    let record;
+
+    if (existingRecord) {
+      // Update existing record
+      existingRecord.pointPerDollarNumber = value.pointPerDollarNumber;
+      await existingRecord.save();
+      responseMessage = 'Point per dollar updated successfully';
+      record = existingRecord;
+    } else {
+      // Create new record
+      const newRecord = await PointPerDollar.create({
+        pointPerDollarNumber: value.pointPerDollarNumber,
+        organization_id: value.organization_id
+      });
+      responseMessage = 'Point per dollar created successfully';
+      record = newRecord;
+    }
+
+    return Response.successResponseData(
+      res,
+      record,
+      res.locals.__(responseMessage),
+    );
+
+  } catch (error) {
+    console.log('Error:', error);
+    return Response.errorResponseWithoutData(
+      res,
+      res.__('Something went wrong'),
+      500 
+    );
+  }
+};
+
+
+exports.showUpsertPointPerDollarPage = async (req, res, next) => {
+  try {
+    const { error, message, formValue } = req.query;
+
+    let admin = req.admin;
+    let adminOrganizationID = admin.Organizations[0].id;
+    const existingRecord = await PointPerDollar.findOne({
+      where: {
+        organization_id: adminOrganizationID
+      }
+    });
+
+    // Additional details from admin
+    let adminThemeColor = admin.Organizations[0].theme_color;
+    let adminBusinessName = admin.Organizations[0].business_name;
+    let superAdmin = admin.is_superadmin;
+
+    return res.render('admin/loyalty/pointperdollar.ejs', {
+      title: existingRecord ? 'Update Point Per Dollar' : 'Create Point Per Dollar',
+      pointPerDollar: existingRecord || { pointPerDollarNumber: '', organization_id: adminOrganizationID },
+      error,
+      message,
+      formValue,
+      adminThemeColor,
+      adminBusinessName,
+      superAdmin,
+      active: 5
+    });
+  } catch (error) {
+    console.log('Error:', error);
+    next(error);
+  }
+};
+
+
 
 
