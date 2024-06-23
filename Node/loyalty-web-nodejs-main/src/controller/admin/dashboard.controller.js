@@ -12,6 +12,8 @@ const { Op, fn, col, QueryTypes } = require("sequelize");
 const { ACTIVE, INACTIVE } = require("../../utils/constants");
 const utils = require("../../utils/helper");
 const {currentDate} = require('../../utils/currentdate.gmt6');
+
+
 exports.superAdminDashboard = async (req, res, next) => {
   try {
     const error = req.flash("error");

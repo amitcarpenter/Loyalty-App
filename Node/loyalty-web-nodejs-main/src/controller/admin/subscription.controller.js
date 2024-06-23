@@ -14,9 +14,10 @@ const { Op } = require("sequelize");
 const stripe = require("stripe")(process.env.STRIPE_LIVE_SECRET_KEY);
 const { ACTIVE, INACTIVE } = require("../../utils/constants");
 const url = require("url");
-const moment = require('moment');
-const {currentDate} = require('../../utils/currentdate.gmt6');
+const moment = require("moment");
+const { currentDate } = require("../../utils/currentdate.gmt6");
 
+// get page for the create subscription for super admin side
 exports.getCreateSubscription = async (req, res, next) => {
   try {
     const { message, error, formValue } = req.query;
@@ -31,6 +32,7 @@ exports.getCreateSubscription = async (req, res, next) => {
   }
 };
 
+// create api for the super admin side
 exports.createSubscription = async (req, res, next) => {
   try {
     req.body.active = ACTIVE;
@@ -92,6 +94,7 @@ exports.createSubscription = async (req, res, next) => {
   }
 };
 
+// get all subscription list on the super admin side
 exports.getSubscription = async (req, res, next) => {
   try {
     const { page, limit, search_text, message, error, formValue } = req.query;
@@ -129,6 +132,7 @@ exports.getSubscription = async (req, res, next) => {
   }
 };
 
+// get edit page for the edit for the super admin side
 exports.editSubscription = async (req, res, next) => {
   try {
     const { error, message, formValue } = req.query;
@@ -156,6 +160,7 @@ exports.editSubscription = async (req, res, next) => {
   }
 };
 
+// update subscripion super admin side
 exports.updateSubscription = async (req, res, next) => {
   const { name, currency, price, subscription_type, trial_period } = req.body;
   try {
@@ -180,6 +185,7 @@ exports.updateSubscription = async (req, res, next) => {
   }
 };
 
+// delete subscription on super admin side
 exports.deleteSubscription = async (req, res, next) => {
   try {
     console.log("del id", req.params.id);
@@ -191,6 +197,7 @@ exports.deleteSubscription = async (req, res, next) => {
   }
 };
 
+// list of the all subscription plan on the admin side
 exports.getAdminSubscriptions = async (req, res, next) => {
   try {
     let admin = req.admin;
@@ -206,11 +213,14 @@ exports.getAdminSubscriptions = async (req, res, next) => {
     // console.log("window.location.href",window.location.href);
     if (redirectStatus === "succeeded") {
       await Admin_Subscription.update(
-        { status: "inactive" }, 
-        { where: {
-          admin_id: admin_id,
-          subscription_id: 1,
-          organization_id: adminOraganizationID } } 
+        { status: "inactive" },
+        {
+          where: {
+            admin_id: admin_id,
+            subscription_id: 1,
+            organization_id: adminOraganizationID,
+          },
+        }
       );
     }
     // const currentDate = moment().format("YYYY-MM-DD");
@@ -236,7 +246,7 @@ exports.getAdminSubscriptions = async (req, res, next) => {
         plan_period_end: {
           [Op.gte]: currentDate, // Greater than or equal to the current date
         },
-        status:"active"
+        status: "active",
       },
       include: [
         {
@@ -248,11 +258,11 @@ exports.getAdminSubscriptions = async (req, res, next) => {
             "price",
             "subscription_type",
             "trial_period",
-          ]
+          ],
         },
       ],
     };
-    
+
     let freeSubscription = await Admin_Subscription.findOne(options3);
     // return res.json(freeSubscription)
     let options = {
@@ -270,7 +280,7 @@ exports.getAdminSubscriptions = async (req, res, next) => {
       order: [["id", "DESC"]],
       where: {},
     };
-  
+
     let data = await Subscription.findAndCountAll(options);
     let options2 = {
       distinct: true,
@@ -281,7 +291,7 @@ exports.getAdminSubscriptions = async (req, res, next) => {
         plan_period_end: {
           [Op.gte]: currentDate, // Greater than or equal to the current date
         },
-        status:"active"
+        status: "active",
       },
       include: [
         {
@@ -289,7 +299,7 @@ exports.getAdminSubscriptions = async (req, res, next) => {
         },
       ],
     };
-  
+
     let adminSubscription = await Admin_Subscription.findOne(options2);
     // return res.json(adminSubscription)
     let response = utils.getPagingData(res, data, page + 1, limit);
@@ -317,6 +327,8 @@ exports.getAdminSubscriptions = async (req, res, next) => {
     next(err);
   }
 };
+
+//======================================= Admin subscription ===============================
 
 // Admin subscription
 exports.getAdminSubscription = async (req, res, next) => {
@@ -353,6 +365,11 @@ exports.getAdminSubscription = async (req, res, next) => {
     // return res.json(data)
     let adminThemeColor = admin.Organizations[0].theme_color;
     let adminBusinessName = admin.Organizations[0].business_name;
+
+    console.log(
+      data,
+      "datadddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    );
     return res.render("admin/subscription/adminSubscriptioninfo.ejs", {
       message,
       error,
@@ -368,6 +385,84 @@ exports.getAdminSubscription = async (req, res, next) => {
 
 exports.getAdminPurchaseSubscription = async (req, res, next) => {
   try {
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
+    console.log(
+      "Hellolllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    );
     const { message, error, formValue } = req.query;
     // let admin = req.admin;
     let admin = req.admin;
@@ -392,6 +487,7 @@ exports.getAdminPurchaseSubscription = async (req, res, next) => {
 exports.postProcessSubscription = async (req, res, next) => {
   try {
     console.log("postProcessSubscription api hit");
+
     const admin = req.admin;
     const adminID = admin.id;
     const adminOraganizationID = admin.Organizations[0].id;
@@ -457,7 +553,7 @@ exports.postProcessSubscription = async (req, res, next) => {
       cancel_at_period_end: subscription.cancel_at_period_end,
       status: subscription.status,
     });
-    console.log("555555555555555",{
+    console.log("555555555555555", {
       clientSecret: subscription.latest_invoice.payment_intent.client_secret,
       stripe_subscription_id: subscription.id,
       ms: "Form submitted successfully",
@@ -590,5 +686,147 @@ exports.cencelProcessSubscription = async (req, res, next) => {
     // res.status(200).json({ data: "User's subscription will end at "});
   } catch (error) {
     console.log("error", error);
+  }
+};
+
+// ============================= 7771874281 get all subscription list for the admin ==================
+exports.getSubscription_for_all = async (req, res, next) => {
+  try {
+    const {
+      page = 0,
+      limit = 100,
+      search_text = "",
+      message,
+      error,
+      formValue,
+    } = req.query;
+    const offset = page * limit;
+
+    let whereCondition = {};
+    if (search_text) {
+      whereCondition = {
+        [Op.or]: [
+          {
+            "$Admin_Subscription.stripe_customer_id$": {
+              [Op.like]: `%${search_text}%`,
+            },
+          },
+          { "$Subscription.name$": { [Op.like]: `%${search_text}%` } },
+          { "$Super_Admin_Cashier.name$": { [Op.like]: `%${search_text}%` } },
+        ],
+      };
+    }
+
+    const data = await Admin_Subscription.findAndCountAll({
+      attributes: [
+        "id",
+        "stripe_customer_id",
+        "stripe_plan_price_id",
+        "stripe_plan_id",
+        "stripe_payment_id",
+        "stripe_card_token",
+        "stripe_subscription_id",
+        "default_paymnet_method",
+        "default_source",
+        "paid_amount",
+        "paid_amount_currency",
+        "plan_interval",
+        "plan_interval_count",
+        "customer_care",
+        "customer_email",
+        "customer_address",
+        "postal_code",
+        "customer_city",
+        "customer_state",
+        "plan_period_start",
+        "plan_period_end",
+        "cancel_at_period_end",
+        "status",
+      ],
+      include: [
+        {
+          model: Subscription,
+          attributes: [
+            "name",
+            "currency",
+            "price",
+            "subscription_type",
+            "trial_period",
+          ],
+          where: whereCondition,
+        },
+        {
+          model: Super_Admin_Cashier,
+          attributes: ["name", "email"],
+          where: whereCondition,
+        },
+      ],
+      distinct: true,
+      // offset: offset,
+      // limit: limit,
+      order: [["id", "DESC"]],
+    });
+
+    const response = {
+      totalItems: data.count,
+      items: data.rows,
+      // totalPages: Math.ceil(data.count / limit),
+      // currentPage: parseInt(page) + 1,
+    };
+
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(response);
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+    console.log(
+      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    );
+
+    return res.render(
+      "super_admin/user/subscription/all-admin-subscription.ejs",
+      {
+        message,
+        error,
+        formValue,
+        totalItems: response.totalItems,
+        items: response.items,
+        totalPages: response.totalPages,
+        currentPage: response.currentPage,
+        search_text: search_text,
+        active: 4,
+      }
+    );
+
+
+    // res.json(response.items)
+  } catch (err) {
+    next(err);
   }
 };

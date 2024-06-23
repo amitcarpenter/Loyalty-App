@@ -32,6 +32,7 @@ router.post("/reset-password",controller.AuthController.userResetPassword)
 
 // download 
 router.get('/customer/downloadCsv',checkAuth,subscriptionCheck,controller.CustomerController.downloadOrganizationCutomerCsv);
+
 // dashboardcontroller
 router.get('/superadmin/dashboard',checkAuth,controller.DashboardController.superAdminDashboard);
 router.get('/dashboard',checkAuth,controller.DashboardController.adminDashboard);
@@ -96,14 +97,18 @@ router.post('/setting/update/:id',checkAuth,subscriptionCheck,logoImage,controll
 
 // Login as Admin 
 router.get('/login-SuperAdmin-as-admin/:admin_id',checkAuth,controller.AdminController.loginAsAdmin);
+
 //subscriptioncontroller
 router.get('/subscription/create',checkAuth,controller.SubscriptionController.getCreateSubscription);
 router.post('/subscription/create',checkAuth,controller.SubscriptionController.createSubscription);
 router.get('/subscription/list',checkAuth,controller.SubscriptionController.getSubscription);
+router.get('/all/subscription/list',checkAuth,controller.SubscriptionController.getSubscription_for_all);
 router.get('/subscription/edit/:id',checkAuth,controller.SubscriptionController.editSubscription);
 router.post('/subscription/update/:id',checkAuth,controller.SubscriptionController.updateSubscription);
 router.get('/subscription/delete/:id',checkAuth,controller.SubscriptionController.deleteSubscription);
 router.get('/available/subscription/list',checkAuth,controller.SubscriptionController.getAdminSubscriptions);
+
+
 router.get('/purchase/subscription/:id',checkAuth,controller.SubscriptionController.getAdminPurchaseSubscription);
 router.post('/purchase/subscription/:id',checkAuth,controller.SubscriptionController.postProcessSubscription);
 router.post('/cencelpurchase/subscription/:stripe_subscription_id',checkAuth,controller.SubscriptionController.cencelProcessSubscription);
