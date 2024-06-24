@@ -16,6 +16,7 @@ const { ACTIVE, INACTIVE } = require("../../utils/constants");
 const url = require("url");
 const moment = require("moment");
 const { currentDate } = require("../../utils/currentdate.gmt6");
+const { successResponseData } = require("../../utils/response");
 
 // get page for the create subscription for super admin side
 exports.getCreateSubscription = async (req, res, next) => {
@@ -694,7 +695,7 @@ exports.getSubscription_for_all = async (req, res, next) => {
   try {
     const {
       page = 0,
-      limit = 100,
+      limit = 10,
       search_text = "",
       message,
       error,
@@ -762,52 +763,13 @@ exports.getSubscription_for_all = async (req, res, next) => {
         },
       ],
       distinct: true,
-      // offset: offset,
-      // limit: limit,
       order: [["id", "DESC"]],
     });
 
     const response = {
       totalItems: data.count,
       items: data.rows,
-      // totalPages: Math.ceil(data.count / limit),
-      // currentPage: parseInt(page) + 1,
     };
-
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(response);
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
-    console.log(
-      "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    );
 
     return res.render(
       "super_admin/user/subscription/all-admin-subscription.ejs",
@@ -820,13 +782,97 @@ exports.getSubscription_for_all = async (req, res, next) => {
         totalPages: response.totalPages,
         currentPage: response.currentPage,
         search_text: search_text,
-        active: 4,
+        active: 5,
       }
     );
-
-
-    // res.json(response.items)
   } catch (err) {
     next(err);
+  }
+};
+
+// Instant expire a subscription
+exports.instantExpire = async (req, res) => {
+  try {
+    const subscriptionId = req.body.id;
+    console.log(
+      "///////////////////////////////////////////////////////////////"
+    );
+    console.log(
+      "///////////////////////////////////////////////////////////////"
+    );
+    console.log(
+      "///////////////////////////////////////////////////////////////"
+    );
+    console.log(
+      "///////////////////////////////////////////////////////////////"
+    );
+    console.log(
+      "///////////////////////////////////////////////////////////////"
+    );
+    console.log(subscriptionId);
+    const expire = await Admin_Subscription.update(
+      { plan_period_end: new Date() },
+      { where: { id: subscriptionId } }
+    );
+    console.log(expire);
+    if (expire) {
+      res.json({ success: true, message: "Subscription expired instantly." });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while expiring the subscription.",
+      error: err.message,
+    });
+  }
+};
+
+// Activate a subscription
+exports.activate = async (req, res) => {
+  try {
+    const subscriptionId = req.body.id;
+    const expireDays = req.body.expireDays || 30;
+    const newExpiryDate = new Date();
+    newExpiryDate.setDate(newExpiryDate.getDate() + parseInt(expireDays));
+
+    const update = await Admin_Subscription.update(
+      { plan_period_end: newExpiryDate },
+      { where: { id: subscriptionId } }
+    );
+    console.log(update);
+    if (update) {
+      res.json({
+        success: true,
+        message: "Subscription activated successfully.",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while activating the subscription.",
+      error: err.message,
+    });
+  }
+};
+
+// Modify subscription expiration date
+exports.modify = async (req, res) => {
+  try {
+    const subscriptionId = req.body.id;
+    const expireDays = req.body.expireDays || 0;
+    const newExpiryDate = new Date();
+    newExpiryDate.setDate(newExpiryDate.getDate() + parseInt(expireDays));
+
+    await Admin_Subscription.update(
+      { plan_period_end: newExpiryDate },
+      { where: { id: subscriptionId } }
+    );
+    res.json({ success: true, message: "Subscription modified successfully." });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while modifying the subscription.",
+      error: err.message,
+    });
   }
 };

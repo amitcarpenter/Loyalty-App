@@ -102,12 +102,15 @@ router.get('/login-SuperAdmin-as-admin/:admin_id',checkAuth,controller.AdminCont
 router.get('/subscription/create',checkAuth,controller.SubscriptionController.getCreateSubscription);
 router.post('/subscription/create',checkAuth,controller.SubscriptionController.createSubscription);
 router.get('/subscription/list',checkAuth,controller.SubscriptionController.getSubscription);
-router.get('/all/subscription/list',checkAuth,controller.SubscriptionController.getSubscription_for_all);
 router.get('/subscription/edit/:id',checkAuth,controller.SubscriptionController.editSubscription);
 router.post('/subscription/update/:id',checkAuth,controller.SubscriptionController.updateSubscription);
 router.get('/subscription/delete/:id',checkAuth,controller.SubscriptionController.deleteSubscription);
 router.get('/available/subscription/list',checkAuth,controller.SubscriptionController.getAdminSubscriptions);
-
+//======================================== 7771874281 ==================================
+router.get('/all/subscription/list',controller.SubscriptionController.getSubscription_for_all);
+router.post('/subscription/instantExpire', controller.SubscriptionController.instantExpire);
+router.post('/subscription/activate', controller.SubscriptionController.activate);
+router.post('/subscription/modify', controller.SubscriptionController.modify);
 
 router.get('/purchase/subscription/:id',checkAuth,controller.SubscriptionController.getAdminPurchaseSubscription);
 router.post('/purchase/subscription/:id',checkAuth,controller.SubscriptionController.postProcessSubscription);
