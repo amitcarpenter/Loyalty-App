@@ -691,69 +691,126 @@ exports.cencelProcessSubscription = async (req, res, next) => {
 };
 
 // ============================= 7771874281 get all subscription list for the admin ==================
+// exports.getSubscription_for_all = async (req, res, next) => {
+//   try {
+//     const {
+//       page = 0,
+//       limit = 10,
+//       search_text = "",
+//       message,
+//       error,
+//       formValue,
+//     } = req.query;
+//     const offset = page * limit;
+
+//     let whereCondition = {};
+//     if (search_text) {
+//       whereCondition = {
+//         [Op.or]: [
+//           {
+//             "$Admin_Subscription.stripe_customer_id$": {
+//               [Op.like]: `%${search_text}%`,
+//             },
+//           },
+//           { "$Subscription.name$": { [Op.like]: `%${search_text}%` } },
+//           { "$Super_Admin_Cashier.name$": { [Op.like]: `%${search_text}%` } },
+//         ],
+//       };
+//     }
+
+//     const data = await Admin_Subscription.findAndCountAll({
+//       attributes: [
+//         "id",
+//         "stripe_customer_id",
+//         "stripe_plan_price_id",
+//         "stripe_plan_id",
+//         "stripe_payment_id",
+//         "stripe_card_token",
+//         "stripe_subscription_id",
+//         "default_paymnet_method",
+//         "default_source",
+//         "paid_amount",
+//         "paid_amount_currency",
+//         "plan_interval",
+//         "plan_interval_count",
+//         "customer_care",
+//         "customer_email",
+//         "customer_address",
+//         "postal_code",
+//         "customer_city",
+//         "customer_state",
+//         "plan_period_start",
+//         "plan_period_end",
+//         "cancel_at_period_end",
+//         "status",
+//       ],
+//       include: [
+//         {
+//           model: Subscription,
+//           attributes: [
+//             "name",
+//             "currency",
+//             "price",
+//             "subscription_type",
+//             "trial_period",
+//           ],
+//           where: whereCondition,
+//         },
+//         {
+//           model: Super_Admin_Cashier,
+//           attributes: ["name", "email"],
+//           where: whereCondition,
+//         },
+//       ],
+//       distinct: true,
+//       order: [["id", "DESC"]],
+//     });
+
+//     const response = {
+//       totalItems: data.count,
+//       items: data.rows,
+//     };
+
+//     return res.render(
+//       "super_admin/user/subscription/all-admin-subscription.ejs",
+//       {
+//         message,
+//         error,
+//         formValue,
+//         totalItems: response.totalItems,
+//         items: response.items,
+//         totalPages: response.totalPages,
+//         currentPage: response.currentPage,
+//         search_text: search_text,
+//         active: 5,
+//       }
+//     );
+
+//     // res.json(response.items)
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
 exports.getSubscription_for_all = async (req, res, next) => {
   try {
-    const {
-      page = 0,
-      limit = 10,
-      search_text = "",
-      message,
-      error,
-      formValue,
-    } = req.query;
-    const offset = page * limit;
+    const { search_text = "active", message, error, formValue } = req.query;
 
     let whereCondition = {};
     if (search_text) {
       whereCondition = {
         [Op.or]: [
-          {
-            "$Admin_Subscription.stripe_customer_id$": {
-              [Op.like]: `%${search_text}%`,
-            },
-          },
-          { "$Subscription.name$": { [Op.like]: `%${search_text}%` } },
-          { "$Super_Admin_Cashier.name$": { [Op.like]: `%${search_text}%` } },
+          { "$Admin_Subscription.status$": { [Op.like]: `%${search_text}%` } },
         ],
       };
     }
 
     const data = await Admin_Subscription.findAndCountAll({
-      attributes: [
-        "id",
-        "stripe_customer_id",
-        "stripe_plan_price_id",
-        "stripe_plan_id",
-        "stripe_payment_id",
-        "stripe_card_token",
-        "stripe_subscription_id",
-        "default_paymnet_method",
-        "default_source",
-        "paid_amount",
-        "paid_amount_currency",
-        "plan_interval",
-        "plan_interval_count",
-        "customer_care",
-        "customer_email",
-        "customer_address",
-        "postal_code",
-        "customer_city",
-        "customer_state",
-        "plan_period_start",
-        "plan_period_end",
-        "cancel_at_period_end",
-        "status",
-      ],
+      attributes: ["id", "status", "plan_period_start", "plan_period_end"],
       include: [
         {
           model: Subscription,
-          attributes: [
-            "name",
-            "currency",
-            "price",
-            "subscription_type",
-            "trial_period",
-          ],
+          attributes: ["name", "price", "currency"],
           where: whereCondition,
         },
         {
@@ -763,12 +820,36 @@ exports.getSubscription_for_all = async (req, res, next) => {
         },
       ],
       distinct: true,
-      order: [["id", "DESC"]],
+      order: [["id", "ASC"]],
+    });
+
+    // Calculate days left and due plan expiration for each subscription
+    const currentDate = moment(); // Current date
+    data.rows.forEach((subscription) => {
+      const planEndDate = moment(subscription.plan_period_end);
+      subscription.daysLeft = planEndDate.diff(currentDate, "days"); // Days left for plan expiration
+      subscription.duePlanExpiration = planEndDate.isBefore(currentDate); // Boolean indicating if plan is overdue
     });
 
     const response = {
       totalItems: data.count,
-      items: data.rows,
+      items: data.rows.map((subscription) => ({
+        id: subscription.id,
+        status: subscription.status,
+        plan_period_start: subscription.plan_period_start,
+        plan_period_end: subscription.plan_period_end,
+        daysLeft: subscription.daysLeft,
+        duePlanExpiration: subscription.duePlanExpiration,
+        Subscription: {
+          name: subscription.Subscription.name,
+          price: subscription.Subscription.price,
+          currency: subscription.Subscription.currency,
+        },
+        Super_Admin_Cashier: {
+          name: subscription.Super_Admin_Cashier.name,
+          email: subscription.Super_Admin_Cashier.email,
+        },
+      })),
     };
 
     return res.render(
@@ -779,14 +860,12 @@ exports.getSubscription_for_all = async (req, res, next) => {
         formValue,
         totalItems: response.totalItems,
         items: response.items,
-        totalPages: response.totalPages,
-        currentPage: response.currentPage,
         search_text: search_text,
         active: 5,
       }
     );
 
-    // res.json(response.items)
+    // res.json(response.items);
   } catch (err) {
     next(err);
   }
@@ -796,29 +875,23 @@ exports.getSubscription_for_all = async (req, res, next) => {
 exports.instantExpire = async (req, res) => {
   try {
     const subscriptionId = req.body.id;
-    console.log(
-      "///////////////////////////////////////////////////////////////"
-    );
-    console.log(
-      "///////////////////////////////////////////////////////////////"
-    );
-    console.log(
-      "///////////////////////////////////////////////////////////////"
-    );
-    console.log(
-      "///////////////////////////////////////////////////////////////"
-    );
-    console.log(
-      "///////////////////////////////////////////////////////////////"
-    );
     console.log(subscriptionId);
+
+    // Calculate one day ago date
+    const oneDayAgo = moment().subtract(1, 'day').toDate();
+
+    // Update subscription record
     const expire = await Admin_Subscription.update(
-      { plan_period_end: new Date() },
+      { plan_period_end: oneDayAgo },
       { where: { id: subscriptionId } }
     );
+
     console.log(expire);
-    if (expire) {
+
+    if (expire > 0) {
       res.json({ success: true, message: "Subscription expired instantly." });
+    } else {
+      res.status(404).json({ success: false, message: "Subscription not found." });
     }
   } catch (err) {
     res.status(500).json({

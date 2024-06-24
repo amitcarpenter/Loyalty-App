@@ -3,20 +3,20 @@
     <div class="page-bar">
       <div class="page-title-breadcrumb">
         <div class="pull-left">
-          <div class="page-title">
-            <%= __('All Subscriptions') %>
-          </div>
+          <div class="page-title"><%= __('All Subscriptions') %></div>
         </div>
         <ol class="breadcrumb page-breadcrumb pull-right">
           <li>
-            <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="/admin/list">
-              <%= __('Home') %>
-            </a>&nbsp;<i class="fa fa-angle-right"></i>
+            <i class="fa fa-home"></i>&nbsp;<a
+              class="parent-item"
+              href="/admin/list"
+            >
+              <%= __('Home') %> </a
+            >&nbsp;<i class="fa fa-angle-right"></i>
           </li>
           <li>
-            <a class="parent-item" href="#">
-              <%= __('Subscriptions') %>
-            </a>&nbsp;<i class="fa fa-angle-right"></i>
+            <a class="parent-item" href="#"> <%= __('Subscriptions') %> </a
+            >&nbsp;<i class="fa fa-angle-right"></i>
           </li>
           <!-- <li><a class="parent-item" href="#"><%= __('Create Banner') %></a></li> -->
         </ol>
@@ -33,42 +33,66 @@
                     <div class="card-body">
                       <div>
                         <% if(message !='' ) { %>
-                          <div id="myDivSuccess" class="alert alert-dismissible fade show mb-0" style="
+                        <div
+                          id="myDivSuccess"
+                          class="alert alert-dismissible fade show mb-0"
+                          style="
                             background-color: rgb(183, 237, 183);
                             border: none;
                             color: rgb(2, 120, 2);
-                          " role="alert">
-                            <%= message %>
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                                onclick="hideDivSuccess()"></button>
-                          </div>
-                          <script>
-                            function hideDivSuccess() {
-                              var div = document.getElementById("myDivSuccess");
-                              div.style.display = "none";
-                            }
-                          </script>
-                          <% } else if(error !='' ){ %>
-                            <div id="myDiv" class="alert alert-dismissible fade show mb-0" style="
+                          "
+                          role="alert"
+                        >
+                          <%= message %>
+                          <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"
+                            onclick="hideDivSuccess()"
+                          ></button>
+                        </div>
+                        <script>
+                          function hideDivSuccess() {
+                            var div = document.getElementById("myDivSuccess");
+                            div.style.display = "none";
+                          }
+                        </script>
+                        <% } else if(error !='' ){ %>
+                        <div
+                          id="myDiv"
+                          class="alert alert-dismissible fade show mb-0"
+                          style="
                             background-color: rgb(237 183 183);
                             border: none;
                             color: rgb(120 2 2);
-                          " role="alert">
-                              <%= error %>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                                  onclick="hideDiv()"></button>
-                            </div>
-                            <script>
-                              function hideDiv() {
-                                var div = document.getElementById("myDiv");
-                                div.style.display = "none";
-                              }
-                            </script>
-                            <% } %>
+                          "
+                          role="alert"
+                        >
+                          <%= error %>
+                          <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close"
+                            onclick="hideDiv()"
+                          ></button>
+                        </div>
+                        <script>
+                          function hideDiv() {
+                            var div = document.getElementById("myDiv");
+                            div.style.display = "none";
+                          }
+                        </script>
+                        <% } %>
                       </div>
                       <div class="d-flex bd-highlight mb-3">
                         <div class="p-2 bd-highlight">
-                          <a type="button" class="btn btn-round btn-primary" href="/admin/subscription/create">
+                          <a
+                            type="button"
+                            class="btn btn-round btn-primary"
+                            href="/admin/subscription/create"
+                          >
                             <%= __('Add Subscription') %>
                           </a>
                         </div>
@@ -153,126 +177,127 @@
                       <table class="table table-responsive custom-table table-sm" id="subscriptionTable">
                         <thead>
                           <tr>
-                            <th class="text-center">
-                              <%= __('S.No') %>
-                            </th>
-                            <th class="text-center">
-                              <%= __('Admin Email') %>
-                            </th>
-                            <th class="text-center">
-                              <%= __('Subscription Name') %>
-                            </th>
-                            <th class="text-center">
-                              <%= __('Price') %>
-                            </th>
-                            <th class="text-center">
-                              <%= __('Currency') %>
-                            </th>
-                            <th class="text-center">
-                              <%= __('Status') %>
-                            </th>
-                            <th class="text-center">
-                              <%= __('Expired in Days') %>
-                            </th>
-                            <th class="text-center">
-                              <%= __('Actions') %>
-                            </th>
+                            <th class="text-center"><%= __('S.No') %></th>
+                            <th class="text-center"><%= __('Admin Email') %></th>
+                            <th class="text-center"><%= __('Subscription Name') %></th>
+                            <th class="text-center"><%= __('Price') %></th>
+                            <th class="text-center"><%= __('Currency') %></th>
+                            <th class="text-center"><%= __('Status') %></th>
+                            <th class="text-center"><%= __('Expired in Days') %></th>
+                            <th class="text-center"><%= __('Actions') %></th>
                             <th class="text-center">ID</th>
-                            <!-- New column for data.id -->
                           </tr>
                         </thead>
                         <tbody>
                           <% if (totalItems) { %>
-                            <% items.forEach((data , index)=> { const expirationDate = new
-                              Date(data.plan_period_end); const currentDate = new
-                              Date(); const daysUntilExpiration =
-                              Math.floor((expirationDate - currentDate) / (1000 * 60
-                              * 60 * 24)); const isActive = data.daysUntilExpiration
-                              >= 0; const daysColor = data.daysUntilExpiration < 0 ? '#e33636' : '#26b809' ;%>
-                                <tr>
-                                  <td class="text-center">
-                                    <%= index + 1 %>
-                                  </td>
-                                  <td class="text-center">
-                                    <%= data.Super_Admin_Cashier.email %>
-                                  </td>
-                                  <td class="text-center">
-                                    <%= data.Subscription.name %>
-                                  </td>
-                                  <td class="text-center">
-                                    <%= data.Subscription.price %>
-                                  </td>
-                                  <td class="text-center">
-                                    <%= data.Subscription.currency %>
-                                  </td>
-                                  <td class="text-center" style="color: <%= daysColor %>">
-                                    <%= isActive ? __('Active') : __('Expired') %>
-                                  </td>
-
-                                  <td class="text-center" style="color: <%= daysColor %>">
-                                    <%=daysUntilExpiration %>
-                                  </td>
-                                  <!-- <td
-                              class="text-center"
-                              style="color: <%= data.daysUntilExpiration < 0 ? '#e33636' : '#26b809' %>;"
-                            >
-                              <%= data.daysUntilExpiration %> <%=
-                              __('day(s)') %>
-                            </td> -->
-                                  <td class="text-center">
-                                    <button data-id="<%= data.id %>" class="tblActBtn btn openModal"
-                                      style="border: none">
-                                      <%= data.status==='active' ? __('Deactivate') : __('Activate') %>
-                                    </button>
-                                  </td>
-                                  <td class="text-center">
-                                    <%= data.id %>
-                                  </td>
-                                  <!-- Display data.id in the new column -->
-                                </tr>
-                                <% }); %>
+                            <% items.forEach((data, index) => { %>
+                              <tr>
+                                <td class="text-center"><%= index + 1 %></td>
+                                <td class="text-center"><%= data.Super_Admin_Cashier.email %></td>
+                                <td class="text-center"><%= data.Subscription.name %></td>
+                                <td class="text-center"><%= data.Subscription.price %></td>
+                                <td class="text-center"><%= data.Subscription.currency %></td>
+                                <td class="text-center">
+                                  <% if (data.daysLeft >= 0) { %>
+                                    <span style="color: #26b809;"><%= __('Active') %></span>
                                   <% } else { %>
-                                    <tr>
-                                      <td colspan="9" class="text-center dataTables_empty">
-                                        <%= __('No data found') %>
-                                      </td>
-                                    </tr>
-                                    <% } %>
+                                    <span style="color: #e33636;"><%= __('Expired') %></span>
+                                  <% } %>
+                                </td>
+                                <td class="text-center" style="color: <%= data.daysLeft < 0 ? '#e33636' : '#26b809' %>;">
+                                  <%= Math.abs(data.daysLeft) %> <%= __('day(s)') %>
+                                </td>
+                                <td class="text-center">
+                                  <button data-id="<%= data.id %>" class="tblActBtn btn openModal" style="border: none; background-color: <%= data.daysLeft >= 0 ? '#e33636' : '#26b809' %>; color: white;">
+                                    <%= data.daysLeft >= 0 ? __('Deactivate') : __('Activate') %>
+                                  </button>
+                                  
+                                </td>
+                                <td class="text-center"><%= data.id %></td>
+                              </tr>
+                            <% }); %>
+                          <% } else { %>
+                            <tr>
+                              <td colspan="9" class="text-center dataTables_empty"><%= __('No data found') %></td>
+                            </tr>
+                          <% } %>
                         </tbody>
                       </table>
+                      
 
                       <!-- Modal -->
-                      <div class="modal fade" id="actionModal" tabindex="-1" role="dialog"
-                        aria-labelledby="actionModalLabel" aria-hidden="true">
+                      <div
+                        class="modal fade"
+                        id="actionModal"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby="actionModalLabel"
+                        aria-hidden="true"
+                      >
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
                               <h5 class="modal-title" id="actionModalLabel">
                                 Modify Subscription
                               </h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <button
+                                type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                              >
                                 <span aria-hidden="true">&times;</span>
                               </button>
                             </div>
                             <div class="modal-body">
                               <form id="modifySubscriptionForm">
-                                <input type="hidden" id="subscriptionId" name="subscriptionId" />
-                                <input type="hidden" id="subscriptionAction" name="subscriptionAction" />
-                                <div class="form-group" id="expireDaysContainer">
-                                  <label for="expireDays">Days Until Expire</label>
-                                  <input type="number" class="form-control" id="expireDays" name="expireDays"
-                                    placeholder="Enter number of days" />
+                                <input
+                                  type="hidden"
+                                  id="subscriptionId"
+                                  name="subscriptionId"
+                                />
+                                <input
+                                  type="hidden"
+                                  id="subscriptionAction"
+                                  name="subscriptionAction"
+                                />
+                                <div
+                                  class="form-group"
+                                  id="expireDaysContainer"
+                                >
+                                  <label for="expireDays"
+                                    >Days Until Expire</label
+                                  >
+                                  <input
+                                    type="number"
+                                    class="form-control"
+                                    id="expireDays"
+                                    name="expireDays"
+                                    placeholder="Enter number of days"
+                                  />
                                 </div>
-                                <button type="button" class="btn btn-danger" id="instantExpireBtn">
+                                <button
+                                  type="button"
+                                  class="btn btn-danger"
+                                  id="instantExpireBtn"
+                                >
                                   Instant Expire
                                 </button>
                               </form>
                             </div>
                             <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                              <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                              >
                                 Close
                               </button>
-                              <button type="button" class="btn btn-primary" id="saveChangesBtn">
+                              <button
+                                type="button"
+                                class="btn btn-primary"
+                                id="saveChangesBtn"
+                              >
                                 Save changes
                               </button>
                             </div>
@@ -367,12 +392,12 @@
       border-radius: 4px;
     }
 
-    .pagination>li {
+    .pagination > li {
       display: inline;
     }
 
-    .pagination>li>a,
-    .pagination>li>span {
+    .pagination > li > a,
+    .pagination > li > span {
       position: relative;
       float: left;
       padding: 6px 12px;
@@ -384,32 +409,32 @@
       border: 1px solid #ddd;
     }
 
-    .pagination>li:first-child>a,
-    .pagination>li:first-child>span {
+    .pagination > li:first-child > a,
+    .pagination > li:first-child > span {
       margin-left: 0;
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
     }
 
-    .pagination>li:last-child>a,
-    .pagination>li:last-child>span {
+    .pagination > li:last-child > a,
+    .pagination > li:last-child > span {
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
     }
 
-    .pagination>li>a:hover,
-    .pagination>li>span:hover,
-    .pagination>li>a:focus,
-    .pagination>li>span:focus {
+    .pagination > li > a:hover,
+    .pagination > li > span:hover,
+    .pagination > li > a:focus,
+    .pagination > li > span:focus {
       background-color: #eee;
     }
 
-    .pagination>.active>a,
-    .pagination>.active>span,
-    .pagination>.active>a:hover,
-    .pagination>.active>span:hover,
-    .pagination>.active>a:focus,
-    .pagination>.active>span:focus {
+    .pagination > .active > a,
+    .pagination > .active > span,
+    .pagination > .active > a:hover,
+    .pagination > .active > span:hover,
+    .pagination > .active > a:focus,
+    .pagination > .active > span:focus {
       z-index: 2;
       color: #fff;
       cursor: default;
@@ -417,52 +442,52 @@
       border-color: #337ab7;
     }
 
-    .pagination>.disabled>span,
-    .pagination>.disabled>span:hover,
-    .pagination>.disabled>span:focus,
-    .pagination>.disabled>a,
-    .pagination>.disabled>a:hover,
-    .pagination>.disabled>a:focus {
+    .pagination > .disabled > span,
+    .pagination > .disabled > span:hover,
+    .pagination > .disabled > span:focus,
+    .pagination > .disabled > a,
+    .pagination > .disabled > a:hover,
+    .pagination > .disabled > a:focus {
       color: #777;
       cursor: not-allowed;
       background-color: #fff;
       border-color: #ddd;
     }
 
-    .pagination-lg>li>a,
-    .pagination-lg>li>span {
+    .pagination-lg > li > a,
+    .pagination-lg > li > span {
       padding: 10px 16px;
       font-size: 18px;
       line-height: 1.3333333;
     }
 
-    .pagination-lg>li:first-child>a,
-    .pagination-lg>li:first-child>span {
+    .pagination-lg > li:first-child > a,
+    .pagination-lg > li:first-child > span {
       border-top-left-radius: 6px;
       border-bottom-left-radius: 6px;
     }
 
-    .pagination-lg>li:last-child>a,
-    .pagination-lg>li:last-child>span {
+    .pagination-lg > li:last-child > a,
+    .pagination-lg > li:last-child > span {
       border-top-right-radius: 6px;
       border-bottom-right-radius: 6px;
     }
 
-    .pagination-sm>li>a,
-    .pagination-sm>li>span {
+    .pagination-sm > li > a,
+    .pagination-sm > li > span {
       padding: 5px 10px;
       font-size: 12px;
       line-height: 1.5;
     }
 
-    .pagination-sm>li:first-child>a,
-    .pagination-sm>li:first-child>span {
+    .pagination-sm > li:first-child > a,
+    .pagination-sm > li:first-child > span {
       border-top-left-radius: 3px;
       border-bottom-left-radius: 3px;
     }
 
-    .pagination-sm>li:last-child>a,
-    .pagination-sm>li:last-child>span {
+    .pagination-sm > li:last-child > a,
+    .pagination-sm > li:last-child > span {
       border-top-right-radius: 3px;
       border-bottom-right-radius: 3px;
     }
@@ -497,7 +522,7 @@
       border-bottom: 2px solid #eceeef;
     }
 
-    .table tbody+tbody {
+    .table tbody + tbody {
       border-top: 2px solid #eceeef;
     }
 
@@ -533,8 +558,8 @@
     }
 
     .table-active,
-    .table-active>th,
-    .table-active>td {
+    .table-active > th,
+    .table-active > td {
       background-color: rgba(0, 0, 0, 0.075);
     }
 
@@ -542,14 +567,14 @@
       background-color: rgba(0, 0, 0, 0.075);
     }
 
-    .table-hover .table-active:hover>td,
-    .table-hover .table-active:hover>th {
+    .table-hover .table-active:hover > td,
+    .table-hover .table-active:hover > th {
       background-color: rgba(0, 0, 0, 0.075);
     }
 
     .table-success,
-    .table-success>th,
-    .table-success>td {
+    .table-success > th,
+    .table-success > td {
       background-color: #dff0d8;
     }
 
@@ -557,14 +582,14 @@
       background-color: #d0e9c6;
     }
 
-    .table-hover .table-success:hover>td,
-    .table-hover .table-success:hover>th {
+    .table-hover .table-success:hover > td,
+    .table-hover .table-success:hover > th {
       background-color: #d0e9c6;
     }
 
     .table-info,
-    .table-info>th,
-    .table-info>td {
+    .table-info > th,
+    .table-info > td {
       background-color: #d9edf7;
     }
 
@@ -572,14 +597,14 @@
       background-color: #c4e3f3;
     }
 
-    .table-hover .table-info:hover>td,
-    .table-hover .table-info:hover>th {
+    .table-hover .table-info:hover > td,
+    .table-hover .table-info:hover > th {
       background-color: #c4e3f3;
     }
 
     .table-warning,
-    .table-warning>th,
-    .table-warning>td {
+    .table-warning > th,
+    .table-warning > td {
       background-color: #fcf8e3;
     }
 
@@ -587,14 +612,14 @@
       background-color: #faf2cc;
     }
 
-    .table-hover .table-warning:hover>td,
-    .table-hover .table-warning:hover>th {
+    .table-hover .table-warning:hover > td,
+    .table-hover .table-warning:hover > th {
       background-color: #faf2cc;
     }
 
     .table-danger,
-    .table-danger>th,
-    .table-danger>td {
+    .table-danger > th,
+    .table-danger > td {
       background-color: #f2dede;
     }
 
@@ -602,8 +627,8 @@
       background-color: #ebcccc;
     }
 
-    .table-hover .table-danger:hover>td,
-    .table-hover .table-danger:hover>th {
+    .table-hover .table-danger:hover > td,
+    .table-hover .table-danger:hover > th {
       background-color: #ebcccc;
     }
 
