@@ -132,7 +132,7 @@
                             let combinedItems = activeItems.concat(expiredItems);
                             combinedItems.forEach((data) => {
                               const isActive = data.daysUntilExpiration >= 0;
-                              const daysColor = data.daysUntilExpiration < 0 ? '#e33636' : '#26b809';
+                              const daysColor = data.daysUntilExpiration < 0 ? '#f18484' : '#5aa94a';
                               const actionButton = isActive ? { text: __('Deactivate'), style: 'btn-danger', action: 'deactivate' }
                                                             : { text: __('Activate'), style: 'btn-success', action: 'activate' };
                             %>
@@ -199,16 +199,16 @@
                                 <td class="text-center"><%= data.Subscription.currency %></td>
                                 <td class="text-center">
                                   <% if (data.daysLeft >= 0) { %>
-                                    <span style="color: #26b809;"><%= __('Active') %></span>
+                                    <span style="color: #5aa94a;"><%= __('Active') %></span>
                                   <% } else { %>
-                                    <span style="color: #e33636;"><%= __('Expired') %></span>
+                                    <span style="color: #f18484;"><%= __('Expired') %></span>
                                   <% } %>
                                 </td>
-                                <td class="text-center" style="color: <%= data.daysLeft < 0 ? '#e33636' : '#26b809' %>;">
+                                <td class="text-center" style="color: <%= data.daysLeft < 0 ? '#f18484' : '#5aa94a' %>;">
                                   <%= Math.abs(data.daysLeft) %> <%= __('day(s)') %>
                                 </td>
                                 <td class="text-center">
-                                  <button data-id="<%= data.id %>" class="tblActBtn btn openModal" style="border: none; background-color: <%= data.daysLeft >= 0 ? '#e33636' : '#26b809' %>; color: white;">
+                                  <button data-id="<%= data.id %>" class="tblActBtn btn openModal" style="border: none; background-color: <%= data.daysLeft >= 0 ? '#f18484' : '#5aa94a' %>; color: white;">
                                     <%= data.daysLeft >= 0 ? __('Deactivate') : __('Activate') %>
                                   </button>
                                   
