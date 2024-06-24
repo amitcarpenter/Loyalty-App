@@ -785,6 +785,8 @@ exports.getSubscription_for_all = async (req, res, next) => {
         active: 5,
       }
     );
+
+    // res.json(response.items)
   } catch (err) {
     next(err);
   }
