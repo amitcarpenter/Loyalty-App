@@ -121,7 +121,7 @@ router.post('/cencelpurchase/subscription/:stripe_subscription_id', checkAuth, c
 router.post('/webhook', controller.SubscriptionController.subscriptionWebhook);
 
 //================================ 7771874281 ==================================
-router.get('/analytics', checkAuth, controller.CustomerController.getCustomersBySpending);
+router.get('/analytics', checkAuth,subscriptionCheck, controller.CustomerController.getCustomersBySpending);
 
 
 module.exports = router;
