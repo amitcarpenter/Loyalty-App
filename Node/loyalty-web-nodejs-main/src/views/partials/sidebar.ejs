@@ -33,7 +33,26 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item <%= (active === 4 || active === 5) ? " active" : "" %>">
+
+                <li class="nav-item <%= (active === 13 ) ? " active" : "" %>">
+                    <a href="#" class="nav-link nav-toggle"> <i data-feather="bar-chart-2"></i></i>
+                        <span class="title">
+                            <%= __('Analytics & Reporting') %>
+                        </span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                   
+                        <li class="nav-item <%= (active === 13) ? " active" : "" %>">
+                            <a href="/admin/analytics" class="nav-link ">
+                                <span class="title mx-4">
+                                    <%= __('All Reporting') %>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item <%= (active === 4 || active === 5 || active === 15) ? " active" : "" %>">
                     <a href="#" class="nav-link nav-toggle">
                         <i data-feather="award"></i>
                         <span class="title">
@@ -68,7 +87,7 @@
                                 </span>
                             </a>
                         </li> -->
-                        <li class="nav-item <%= (active === 6) ? " active" : "" %>">
+                        <li class="nav-item <%= (active === 15) ? " active" : "" %>">
                             <a href="/admin/loyalty/pointperdollar" class="nav-link ">
                                 <span class="title mx-4">
                                     <%= __('Point Per Dollar') %>

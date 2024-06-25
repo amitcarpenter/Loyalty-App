@@ -12,6 +12,7 @@ const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const utils = require("../../utils/helper");
+const Joi = require("joi")
 const { Sequelize, QueryTypes } = require("sequelize");
 const { ACTIVE, BLOCKED } = require("../../utils/constants");
 const { currentDate } = require('../../utils/currentdate.gmt6');
@@ -388,3 +389,160 @@ exports.updateCustomer = async (req, res, next) => {
   }
 };
 
+//===================================  7771874281 ==============================================
+// exports.getCustomersBySpending = async (req, res) => {
+//   try {
+//     let admin = req.admin;
+
+//     const { page = 1, limit = 10, search_text, message, error, formValue } = req.query;
+//     let adminThemeColor = admin.Organizations[0].theme_color;
+//     let adminBusinessName = admin.Organizations[0].business_name;
+//     let adminOrganizationID = admin.Organizations[0].id;
+//     let superAdmin = admin.is_superadmin;
+
+//     // Fetch total spending for each customer in the specified organization
+//     const customerSpendings = await Customer_Visit.findAll({
+//       where: { organization_id: adminOrganizationID },
+//       attributes: [
+//         'customer_id',
+//         [sequelize.fn('SUM', sequelize.col('transaction_amount')), 'total_spent']
+//       ],
+//       group: ['customer_id'],
+//       order: [[sequelize.literal('total_spent'), 'DESC']],
+//       raw: true,
+//     });
+
+//     // Fetch customer details
+//     const customers = await Customer.findAll({
+//       where: { organization_id: adminOrganizationID },
+//       attributes: ['id', 'name', 'contact_number'],
+//       raw: true,
+//     });
+
+//     // Combine spending data with customer details
+//     const customersWithSpending = customers.map(customer => {
+//       const spending = customerSpendings.find(spend => spend.customer_id === customer.id);
+//       return {
+//         id: customer.id,
+//         name: customer.name,
+//         contact_number: customer.contact_number,
+//         total_spent: spending ? parseFloat(spending.total_spent) : 0,
+//       };
+//     });
+
+//     // Sort customers by total_spent in descending order
+//     customersWithSpending.sort((a, b) => b.total_spent - a.total_spent);
+
+//     // Paginate the results
+//     const offset = (page - 1) * limit;
+//     const paginatedCustomers = customersWithSpending.slice(offset, offset + limit);
+
+//     // Calculate total pages
+//     const totalItems = customersWithSpending.length;
+//     const totalPages = Math.ceil(totalItems / limit);
+
+//     // Render the data to an EJS template
+//     return res.render("admin/analytics/analytics.ejs", {
+//       message,
+//       error,
+//       formValue,
+//       totalItems,
+//       items: paginatedCustomers,
+//       totalPages,
+//       currentPage: parseInt(page, 10),
+//       search_text,
+//       adminThemeColor,
+//       adminBusinessName,
+//       superAdmin,
+//       active: 13,
+//     });
+
+//   } catch (error) {
+//     console.log('Error:', error);
+//     return res.status(500).json({
+//       success: false,
+//       message: 'Something went wrong',
+//     });
+//   }
+// };
+
+
+exports.getCustomersBySpending = async (req, res) => {
+  try {
+    let admin = req.admin;
+
+    const { page = 1, limit = 10, search_text, message, error, formValue } = req.query;
+    let adminThemeColor = admin.Organizations[0].theme_color;
+    let adminBusinessName = admin.Organizations[0].business_name;
+    let adminOrganizationID = admin.Organizations[0].id;
+    let superAdmin = admin.is_superadmin;
+
+    // Fetch total spending for each customer in the specified organization
+    const customerSpendings = await Customer_Visit.findAll({
+      where: { organization_id: adminOrganizationID },
+      attributes: [
+        'customer_id',
+        [sequelize.fn('SUM', sequelize.col('transaction_amount')), 'total_spent']
+      ],
+      group: ['customer_id'],
+      order: [[sequelize.literal('total_spent'), 'DESC']],
+      raw: true,
+    });
+
+    // Fetch customer details
+    const customers = await Customer.findAll({
+      where: { organization_id: adminOrganizationID },
+      attributes: ['id', 'name', 'contact_number'],
+      raw: true,
+    });
+
+    // Combine spending data with customer details
+    const customersWithSpending = customers.map(customer => {
+      const spending = customerSpendings.find(spend => spend.customer_id === customer.id);
+      return {
+        id: customer.id,
+        name: customer.name,
+        contact_number: customer.contact_number,
+        total_spent: spending ? parseFloat(spending.total_spent) : 0,
+      };
+    });
+
+    // Sort customers by total_spent in descending order
+    customersWithSpending.sort((a, b) => b.total_spent - a.total_spent);
+
+    // Paginate the results
+    const offset = (page - 1) * limit;
+    const paginatedCustomers = customersWithSpending.slice(offset, offset + limit);
+
+    // Calculate total pages
+    const totalItems = customersWithSpending.length;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // Calculate top spenders (for example, top 5 spenders)
+    const topSpenders = customersWithSpending.slice(0, 5); // Adjust as per your requirement
+
+    // Render the data to an EJS template
+    return res.render("admin/analytics/analytics.ejs", {
+      message,
+      error,
+      formValue,
+      totalItems,
+      items: paginatedCustomers,
+      totalPages,
+      currentPage: parseInt(page, 10),
+      search_text,
+      adminThemeColor,
+      adminBusinessName,
+      superAdmin,
+      active: 13,
+      topSpenders, // Pass topSpenders to the template
+    });
+
+  } catch (error) {
+    console.log('Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Something went wrong',
+    });
+  }
+};
