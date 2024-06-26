@@ -159,6 +159,9 @@
                                 <th class="text-center">
                                   <%= __('Number of Activity') %>
                                 </th>
+                                <th class="text-center">
+                                  <%= __('Number of Transaction') %>
+                                </th>
                                 <th class="text-center"><%= __('TIER') %></th>
                               </tr>
                             </thead>
@@ -166,18 +169,20 @@
                               <% if (topSpenders.length > 0) { %> <%
                               topSpenders.forEach((spender, index) => { %>
                               <tr>
-                                <td class="text-center"><%= index + 1 %></td>
-                                <td class="text-center"><%= spender.name %></td>
+                                <td class="text-center"><%= index + 1  %></td>
+                                <td class="text-center"><%= spender.name || '___' %></td>
                                 <td class="text-center">
-                                  <%= spender.contact_number %>
+                                  <%= spender.contact_number || '___' %>
                                 </td>
                                 <td class="text-center">
                                   <%= spender.total_spent %>
                                 </td>
                                 <td class="text-center">
+                                  <%= spender.visit_count %>
+                                </td>
+                                <td class="text-center">
                                   <%= spender.transaction_count %>
                                 </td>
-                                <!-- <td class="text-center"><%= spender.tier %></td> -->
                                 <td
                                   class="text-center"
                                   style="<%= spender.tier.toLowerCase() === 'bronze' ? 'background-color: #cd7f32; color: white;' : spender.tier.toLowerCase() === 'silver' ? 'background-color: #c0c0c0; color: black;' : 'background-color: #ffd700; color: black;' %>"
@@ -220,6 +225,9 @@
                                 <th class="text-center">
                                   <%= __('Number of Activity') %>
                                 </th>
+                                <th class="text-center">
+                                  <%= __('Number of Transaction') %>
+                                </th>
                                 <th class="text-center"><%= __('TIER') %></th>
                               </tr>
                             </thead>
@@ -228,20 +236,24 @@
                               mostFrequentBuyers.forEach((buyer, index) => { %>
                               <tr>
                                 <td class="text-center"><%= index + 1 %></td>
-                                <td class="text-center"><%= buyer.name %></td>
                                 <td class="text-center">
-                                  <%= buyer.contact_number %>
+                                  <%= buyer.name || '___' %>
+                                </td>
+                                <td class="text-center">
+                                  <%= buyer.contact_number|| '___' %>
                                 </td>
                                 <td class="text-center">
                                   <%= buyer.total_spent %>
                                 </td>
                                 <td class="text-center">
+                                  <%= buyer.visit_count %>
+                                </td>
+                                <td class="text-center">
                                   <%= buyer.transaction_count %>
                                 </td>
-                                <!-- <td class="text-center"><%= buyer.tier %></td> -->
                                 <td
                                   class="text-center"
-                                  style="<%= buyer.tier.toLowerCase() === 'bronze' ? 'background-color: #cd7f32; color: white;' : buyer`.tier.toLowerCase() === 'silver' ? 'background-color: #c0c0c0; color: black;' : 'background-color: #ffd700; color: black;' %>"
+                                  style="<%= buyer.tier.toLowerCase() === 'bronze' ? 'background-color: #cd7f32; color: white;' : buyer.tier.toLowerCase() === 'silver' ? 'background-color: #c0c0c0; color: black;' : 'background-color: #ffd700; color: black;' %>"
                                 >
                                   <%= buyer.tier %>
                                 </td>
@@ -257,6 +269,7 @@
                           </table>
                         </div>
 
+                        <!-- Least Frequent Buyers tab -->
                         <div
                           class="tab-pane fade"
                           id="least-frequent-buyers"
@@ -280,6 +293,9 @@
                                 <th class="text-center">
                                   <%= __('Number of Activity') %>
                                 </th>
+                                <th class="text-center">
+                                  <%= __('Number of Transaction') %>
+                                </th>
                                 <th class="text-center"><%= __('TIER') %></th>
                               </tr>
                             </thead>
@@ -288,17 +304,21 @@
                               leastFrequentBuyers.forEach((buyer, index) => { %>
                               <tr>
                                 <td class="text-center"><%= index + 1 %></td>
-                                <td class="text-center"><%= buyer.name %></td>
                                 <td class="text-center">
-                                  <%= buyer.contact_number %>
+                                  <%= buyer.name || '___' %>
+                                </td>
+                                <td class="text-center">
+                                  <%= buyer.contact_number || '___' %>
                                 </td>
                                 <td class="text-center">
                                   <%= buyer.total_spent %>
                                 </td>
                                 <td class="text-center">
+                                  <%= buyer.visit_count %>
+                                </td>
+                                <td class="text-center">
                                   <%= buyer.transaction_count %>
                                 </td>
-                                <!-- <td class="text-center"><%= buyer.tier %></td> -->
                                 <td
                                   class="text-center"
                                   style="<%= buyer.tier.toLowerCase() === 'bronze' ? 'background-color: #cd7f32; color: white;' : buyer.tier.toLowerCase() === 'silver' ? 'background-color: #c0c0c0; color: black;' : 'background-color: #ffd700; color: black;' %>"
@@ -346,13 +366,13 @@
                       var url;
                       switch (target) {
                         case "#top-spenders":
-                          url = "/admin/analytics"; // Adjust URL as per your backend route
+                          url = "/admin/analytics";
                           break;
                         case "#most-frequent-buyers":
-                          url = "/admin/analytics"; // Adjust URL as per your backend route
+                          url = "/admin/analytics";
                           break;
                         case "#least-frequent-buyers":
-                          url = "/admin/analytics"; // Adjust URL as per your backend route
+                          url = "/admin/analytics";
                           break;
                         default:
                           return;

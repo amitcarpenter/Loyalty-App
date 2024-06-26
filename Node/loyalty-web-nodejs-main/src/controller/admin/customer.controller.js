@@ -439,10 +439,11 @@ const determineTier = (totalSpent, transactionCount) => {
 };
 
 
-const getMostFrequentBuyers = async (adminOrganizationID, dateRange) => {
+const getMostFrequentBuyers = async (adminOrganizationID, dateRange, topN = 100) => {
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - dateRange);
 
+  // Fetching customer visits and aggregating data
   const customerVisits = await Customer_Visit.findAll({
     where: {
       organization_id: adminOrganizationID,
@@ -454,13 +455,18 @@ const getMostFrequentBuyers = async (adminOrganizationID, dateRange) => {
       "customer_id",
       [sequelize.fn("COUNT", sequelize.col("id")), "visit_count"],
       [sequelize.fn("SUM", sequelize.col("transaction_amount")), "total_spent"],
-      [sequelize.fn("COUNT", sequelize.col("id")), "transaction_count"],
+      [
+        sequelize.fn("COUNT", sequelize.literal('CASE WHEN transaction_amount IS NOT NULL THEN 1 END')),
+        "transaction_count"
+      ],
     ],
     group: ["customer_id"],
+    order: [[sequelize.fn("COUNT", sequelize.literal('CASE WHEN transaction_amount IS NOT NULL THEN 1 END')), "DESC"]], 
     raw: true,
   });
 
-  const customerFields = ["id", "name", "contact_number"]; // Select specific fields
+  // Fetching customer details
+  const customerFields = ["id", "name", "contact_number"];
   const customers = await Customer.findAll({
     where: { organization_id: adminOrganizationID },
     attributes: customerFields,
@@ -470,6 +476,7 @@ const getMostFrequentBuyers = async (adminOrganizationID, dateRange) => {
   const customerMap = new Map();
   customers.forEach((customer) => customerMap.set(customer.id, customer));
 
+  // Mapping customer visits to customer details and adding tiers
   const frequentBuyers = customerVisits.map((visit) => {
     const customer = customerMap.get(visit.customer_id);
 
@@ -477,6 +484,7 @@ const getMostFrequentBuyers = async (adminOrganizationID, dateRange) => {
       visit.total_spent ? parseFloat(visit.total_spent) : 0,
       visit.transaction_count ? parseInt(visit.transaction_count, 10) : 0
     );
+
     return {
       ...customer,
       total_spent: visit.total_spent ? parseFloat(visit.total_spent) : 0,
@@ -488,6 +496,7 @@ const getMostFrequentBuyers = async (adminOrganizationID, dateRange) => {
 
   return frequentBuyers;
 };
+
 
 const getLeastFrequentBuyers = async (adminOrganizationID, dateRange) => {
   const startDate = new Date();
@@ -504,9 +513,13 @@ const getLeastFrequentBuyers = async (adminOrganizationID, dateRange) => {
       "customer_id",
       [sequelize.fn("COUNT", sequelize.col("id")), "visit_count"],
       [sequelize.fn("SUM", sequelize.col("transaction_amount")), "total_spent"],
-      [sequelize.fn("COUNT", sequelize.col("id")), "transaction_count"],
+      [
+        sequelize.fn("COUNT", sequelize.literal('CASE WHEN transaction_amount IS NOT NULL THEN 1 END')),
+        "transaction_count"
+      ],
     ],
     group: ["customer_id"],
+    order: [[sequelize.fn("COUNT", sequelize.literal('CASE WHEN transaction_amount IS NOT NULL THEN 1 END')), "ASC"]], 
     raw: true,
   });
 
@@ -543,9 +556,6 @@ const getLeastFrequentBuyers = async (adminOrganizationID, dateRange) => {
   return sortedLeastFrequentBuyers;
 };
 
-
-
-
 // All in one Ananlisys Function
 exports.getCustomersBySpending = async (req, res) => {
   try {
@@ -557,7 +567,7 @@ exports.getCustomersBySpending = async (req, res) => {
       message,
       error,
       formValue,
-      date_range = 30, // Default date range to 30 days if not provided
+      date_range = 30,
     } = req.query;
 
     const adminThemeColor = admin.Organizations[0].theme_color;
@@ -571,8 +581,13 @@ exports.getCustomersBySpending = async (req, res) => {
       attributes: [
         "customer_id",
         [sequelize.fn("SUM", sequelize.col("transaction_amount")), "total_spent"],
-        [sequelize.fn("COUNT", sequelize.col("id")), "transaction_count"],
+        // [sequelize.fn("COUNT", sequelize.col("id")), "transaction_count"],
+        [
+          sequelize.fn("COUNT", sequelize.literal('CASE WHEN transaction_amount IS NOT NULL THEN 1 END')),
+          "transaction_count"
+        ],
         [sequelize.fn("MAX", sequelize.col("transaction_amount")), "biggest_transaction_amount"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "visit_count"],
       ],
       group: ["customer_id"],
       raw: true,
@@ -581,9 +596,11 @@ exports.getCustomersBySpending = async (req, res) => {
     // Fetch most frequent buyers
     const mostFrequentBuyers = await getMostFrequentBuyers(adminOrganizationID, date_range);
 
+    
     // Fetch least frequent buyers
     const leastFrequentBuyers = await getLeastFrequentBuyers(adminOrganizationID, date_range);
-
+    
+    // return res.json(leastFrequentBuyers)
     // Fetch customer details (ensure you only fetch necessary fields)
     const customerFields = ["id", "name", "contact_number"]; // Select specific fields
     const customers = await Customer.findAll({
@@ -608,6 +625,7 @@ exports.getCustomersBySpending = async (req, res) => {
         total_spent: spending.total_spent ? parseFloat(spending.total_spent) : 0,
         transaction_count: spending.transaction_count ? parseInt(spending.transaction_count, 10) : 0,
         biggest_transaction_amount: spending.biggest_transaction_amount ? parseFloat(spending.biggest_transaction_amount) : 0,
+        visit_count: spending.visit_count ? parseInt(spending.visit_count, 10) : 0,
         tier
       };
     });
